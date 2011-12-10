@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:key="lcm_preferences">
+
+    <CheckBoxPreference android:key="mythtv_enable"
+                        android:title="@string/mythtv_enable_title"
+			android:summary="@string/mythtv_enable_summary"/>
+
+    <EditTextPreference android:key="mythtv_server"
+			android:title="@string/mythtv_server_title"
+			android:summary="@string/mythtv_server_summary"
+			android:dialogTitle="@string/mythtv_server_dialog_title"/>
+
+    <EditTextPreference android:key="mythtv_port"
+			android:title="@string/mythtv_port_title"
+			android:summary="@string/mythtv_port_summary"
+			android:dialogTitle="@string/mythtv_port_dialog_title"
+			android:defaultValue="6543"
+			android:numeric="integer" android:maxLength="5"/>
+
+</PreferenceScreen>

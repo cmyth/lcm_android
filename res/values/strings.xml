@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about">About</string>
+    <string name="about_string">This is the libcmyth example application for Android.</string>
+    <string name="settings">Settings</string>
+    <string name="close">Close</string>
+
+    <string name="settings_screen_name">Settings</string>
+    <string name="mythtv_enable_title">MythTV Enable</string>
+    <string name="mythtv_enable_summary">Enable connecting to a server.</string>
+    <string name="mythtv_server_title">Server Address</string>
+    <string name="mythtv_server_summary">Hostname or IP Address.</string>
+    <string name="mythtv_server_dialog_title">MythTV Server</string>
+    <string name="mythtv_port_title">Server Port Number</string>
+    <string name="mythtv_port_summary">Server port number.</string>
+    <string name="mythtv_port_dialog_title">Server Port Number</string>
+
+    <string name="myth_list_screen_name">Recordings</string>
+
+    <string name="sever_name">Server Name</string>
+
+    <string name="app_name">lcm</string>
+    <string name="app_link">http://www.mvpmc.org/</string>
+</resources>

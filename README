@@ -1,0 +1,25 @@
+libcmyth example application for Android
+----------------------------------------
+
+This is a very simple example application for how to use libcmyth with
+Android and JNI.
+
+To build this application, you will first need to clone the libcmyth git
+repository, https://github.com/cmyth, into jni/cmyth:
+
+	$ git clone git://github.com/cmyth/cmyth.git jni/cmyth
+
+Then you can build the application:
+
+	$ make
+
+And install the application either on your simulator or your device:
+
+	$ make sim_update
+	$ make hw_update
+
+Please note that video playback is done via an intent, which means you will
+need a video player capable of playing your recordings via http.  I would
+suggest MX Video Player, but other video applications should work as well.
+
+	https://market.android.com/details?id=com.mxtech.videoplayer.ad&hl=en
