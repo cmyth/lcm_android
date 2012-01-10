@@ -56,7 +56,6 @@ public class httpd extends Thread
 			ServerSocket ss = server;
 			try {
 				Log.v(TAG, "wait for connection");
-				// XXX: crashes?
 				Socket s = ss.accept();
 				Log.v(TAG, "got connection");
 				responder resp = new responder(prog,
@@ -319,7 +318,7 @@ public class httpd extends Thread
 	}
 
 	public void close() {
-		if (prog == null) {
+		if (prog != null) {
 			prog.close();
 		}
 	}
