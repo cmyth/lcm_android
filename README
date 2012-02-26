@@ -7,7 +7,7 @@ Android and JNI.
 To build this application, you will first need to clone the libcmyth git
 repository, https://github.com/cmyth, into jni/cmyth:
 
-	$ git clone git://github.com/cmyth/cmyth.git jni/cmyth
+	$ git clone git://github.com/cmyth/lcm_android.git jni/cmyth
 
 Then you can build the application:
 
