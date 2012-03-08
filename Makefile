@@ -10,12 +10,17 @@ EMULATOR=emulator-5554
 
 default: debug
 
-debug:
-	ndk-build
+debug: libcmyth
 	ant debug
 
+libcmyth:
+	cd cmyth && BUILD_ANDROID=y scons
+	mkdir -p libs/armeabi
+	cp cmyth/*/*.so libs/armeabi
+	cp cmyth/swig/cmyth.jar libs
+
 clean:
-	ndk-build clean
+	cd cmyth && scons -c
 	ant clean
 
 sim:

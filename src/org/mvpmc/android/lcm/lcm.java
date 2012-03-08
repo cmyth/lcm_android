@@ -108,4 +108,11 @@ public class lcm extends Activity
 
 	private SharedPreferences prefs;
 	private boolean enabled;
+
+	static {
+		System.loadLibrary("refmem");
+		System.loadLibrary("cmyth");
+		System.loadLibrary("cppmyth");
+		System.loadLibrary("cmyth_java");
+	}
 }

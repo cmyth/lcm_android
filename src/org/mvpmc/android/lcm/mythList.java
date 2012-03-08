@@ -49,10 +49,10 @@ import android.preference.PreferenceManager;
 import android.preference.Preference;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
-import org.mvpmc.android.lcm.cmyth.connection;
-import org.mvpmc.android.lcm.cmyth.proglist;
-import org.mvpmc.android.lcm.cmyth.proginfo;
-import org.mvpmc.android.lcm.cmyth.libcmyth;
+import org.mvpmc.cmyth.java.refmem;
+import org.mvpmc.cmyth.java.connection;
+import org.mvpmc.cmyth.java.proglist;
+import org.mvpmc.cmyth.java.proginfo;
 
 public class mythList extends ListActivity
 {
@@ -116,15 +116,31 @@ public class mythList extends ListActivity
 		}
 	}
 
+	private List getProgTitles() {
+		int i;
+		long count = progs.get_count();
+		List list = new ArrayList();
+
+		for (i=0; i<count; i++) {
+			proginfo prog = progs.get_prog(i);
+			String title = prog.title();
+			Log.v(TAG, title);
+			list.add(title);
+			prog.release();
+		}
+
+		return list;
+	}
+
 	private void createTitleList() {
 		List titles;
 
 		if (progs == null) {
 			titles = new ArrayList<String>();
 		} else {
-			Log.v(TAG, "mythList prog count " + progs.getCount());
+			Log.v(TAG, "mythList prog count " + progs.get_count());
 
-			titles = progs.getProgTitles();
+			titles = getProgTitles();
 		}
 
 		SortedSet set = new TreeSet(new Comparator<String>() {
@@ -166,20 +182,20 @@ public class mythList extends ListActivity
 		if (progs == null) {
 			episodes = new ArrayList<String>();
 		} else {
-			long count = progs.getCount();
-			long i;
+			long count = progs.get_count();
+			int i;
 
 			episodes = new ArrayList();
 
 			for (i=0; i<count; i++) {
-				proginfo prog = progs.getProginfo(i);
-				String title = prog.getTitle();
+				proginfo prog = progs.get_prog(i);
+				String title = prog.title();
 				if (current.equals(title)) {
-					String subtitle = prog.getSubtitle();
+					String subtitle = prog.subtitle();
 					episodes.add(subtitle);
 					recordings.add(prog);
 				} else {
-					prog.close();
+					prog.release();
 				}
 			}
 		}
@@ -274,7 +290,7 @@ public class mythList extends ListActivity
 		}
 
 		int port = daemon.getPort();
-		String name = prog.getFilename();
+		String name = prog.pathname();
 		String url = String.format("http://localhost:%d/%s", port, name);
 		Intent i = new Intent(Intent.ACTION_VIEW);  
 		i.setData(Uri.parse(url));  
@@ -300,9 +316,9 @@ public class mythList extends ListActivity
 	}
 
 	private void cleanup() {
-		libcmyth.refDebug();
+		//libcmyth.refDebug();
 		if (progs != null) {
-			progs.close();
+			progs.release();
 		}
 		if (daemon != null) {
 			daemon.interrupt();
@@ -315,10 +331,10 @@ public class mythList extends ListActivity
 			Iterator it = recordings.iterator();
 			while (it.hasNext()) {
 				proginfo prog = (proginfo)it.next();
-				prog.close();
+				prog.release();
 			}
 		}
-		libcmyth.refDebug();
+		//libcmyth.refDebug();
 
 		daemon = null;
 		progs = null;

@@ -28,8 +28,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.content.Intent;
 
-import org.mvpmc.android.lcm.cmyth.connection;
-import org.mvpmc.android.lcm.cmyth.proglist;
+import org.mvpmc.cmyth.java.connection;
+import org.mvpmc.cmyth.java.proglist;
 
 public class myth extends Thread {
 
@@ -50,10 +50,10 @@ public class myth extends Thread {
 		Log.v(TAG, "connect to server: " + server);
 		int port = list.getMythPort();
 		Log.v(TAG, "connect to port: " + port);
-		conn = new connection(server, port, 16*1024, 4096);
+		conn = new connection(server);
 		Log.v(TAG, "connect() finished");
-		progs = conn.getAllRecorded();
-		Log.v(TAG, "connect(): program count " + progs.getCount());
+		progs = conn.get_proglist();
+		Log.v(TAG, "connect(): program count " + progs.get_count());
 	}
 
 	public void disconnect() {
@@ -64,7 +64,7 @@ public class myth extends Thread {
 
 	public long getProgCount() {
 		if (progs != null) {
-			return progs.getCount();
+			return progs.get_count();
 		} else {
 			return 0;
 		}
@@ -76,10 +76,10 @@ public class myth extends Thread {
 
 	public void close() {
 		if (conn != null) {
-			conn.close();
+			conn.release();
 		}
 		if (progs != null) {
-			progs.close();
+			progs.release();
 		}
 	}
 

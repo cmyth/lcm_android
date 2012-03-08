@@ -31,8 +31,9 @@ import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 import java.nio.ByteBuffer;
 
-import org.mvpmc.android.lcm.cmyth.proginfo;
-import org.mvpmc.android.lcm.cmyth.file;
+import org.mvpmc.cmyth.java.cmythConstants;
+import org.mvpmc.cmyth.java.proginfo;
+import org.mvpmc.cmyth.java.file;
 
 public class httpd extends Thread
 {
@@ -100,9 +101,9 @@ public class httpd extends Thread
 
 			max = 128*1024;
 
-			file = prog.getFile(prog.getHost(), prog.getPort(), max, max);
+			file = prog.open();
 
-			length = prog.getLength();
+			length = prog.length();
 		}
 
 		@Override
@@ -227,28 +228,22 @@ public class httpd extends Thread
 			long offset = start;
 
 			while (offset < end) {
-				int len = file.requestBlock(max);
-				Log.v(TAG, "requestBlock() ret " + len);
+				ByteBuffer bb;
+				int len;
 
-				if (len <= 0) {
+				bb = ByteBuffer.allocateDirect(cmythConstants.DEFAULT_BUFLEN);
+				len = file.read(bb);
+
+				if (len > 0) {
+					byte b[] = new byte[len];
+					bb.get(b, 0, len);
+					os.write(b);
+					offset += len;
+				}
+
+				if (len == 0) {
 					break;
 				}
-
-				int tot = 0;
-
-				byte buffer[] = new byte[len];
-
-				while (tot < len) {
-					ByteBuffer bb = ByteBuffer.allocateDirect(len-tot);
-					int total = file.getBlock(bb, len-tot);
-					Log.v(TAG, "read " + total);
-					byte by[] = new byte[total];
-					bb.get(by, 0, total);
-					os.write(by);
-					tot += total;
-				}
-
-				offset += len;
 			}
 
 			Log.v(TAG, "response complete");
@@ -277,27 +272,22 @@ public class httpd extends Thread
 			int offset = 0;
 
 			while (offset < length) {
-				int len = file.requestBlock(max);
-				Log.v(TAG, "requestBlock() ret " + len);
-				int tot = 0;
+				ByteBuffer bb;
+				int len;
 
-				if (len <= 0) {
+				bb = ByteBuffer.allocateDirect(cmythConstants.DEFAULT_BUFLEN);
+				len = file.read(bb);
+
+				if (len > 0) {
+					byte b[] = new byte[len];
+					bb.get(b, 0, len);
+					os.write(b);
+					offset += len;
+				}
+
+				if (len == 0) {
 					break;
 				}
-
-				byte buffer[] = new byte[len];
-
-				while (tot < len) {
-					ByteBuffer bb = ByteBuffer.allocateDirect(len-tot);
-					int total = file.getBlock(bb, len-tot);
-					Log.v(TAG, "read " + total);
-					byte by[] = new byte[total];
-					bb.get(by, 0, total);
-					os.write(by);
-					tot += total;
-				}
-
-				offset += len;
 			}
 
 			Log.v(TAG, "file transfer complete");
@@ -319,7 +309,7 @@ public class httpd extends Thread
 
 	public void close() {
 		if (prog != null) {
-			prog.close();
+			prog.release();
 		}
 	}
 
