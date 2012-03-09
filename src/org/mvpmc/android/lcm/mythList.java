@@ -1,5 +1,5 @@
 //
-//  Copyright (C) 2011, Jon Gettler <gettler@mvpmc.org>
+//  Copyright (C) 2011-2012, Jon Gettler <gettler@mvpmc.org>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -192,7 +192,12 @@ public class mythList extends ListActivity
 				String title = prog.title();
 				if (current.equals(title)) {
 					String subtitle = prog.subtitle();
-					episodes.add(subtitle);
+					if (subtitle.equals("")) {
+						String start = prog.start_str();
+						episodes.add(start);
+					} else {
+						episodes.add(subtitle);
+					}
 					recordings.add(prog);
 				} else {
 					prog.release();
