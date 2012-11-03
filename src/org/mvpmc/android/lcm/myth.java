@@ -50,7 +50,12 @@ public class myth extends Thread {
 		Log.v(TAG, "connect to server: " + server);
 		int port = list.getMythPort();
 		Log.v(TAG, "connect to port: " + port);
-		conn = new connection(server);
+		try {
+			conn = new connection(server);
+		} catch (Exception e) {
+			Log.v(TAG, "connect() failed!");
+			return;
+		}
 		Log.v(TAG, "connect() finished");
 		progs = conn.get_proglist();
 		Log.v(TAG, "connect(): program count " + progs.get_count());
