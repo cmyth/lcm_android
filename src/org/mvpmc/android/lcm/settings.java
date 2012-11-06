@@ -26,6 +26,9 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 
 public class settings extends PreferenceActivity
 {
@@ -35,8 +38,30 @@ public class settings extends PreferenceActivity
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.settings);
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if (error != null) {
+			show_error(error);
+		}
+	}
+
+	public void show_error(String msg) {
+		final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.setTitle(msg);
+                alert.setCancelable(true);
+		alert.setNegativeButton("Close",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+
+		alert.show();
+	}
+
+	public static void set_error(String msg) {
+		error = msg;
 	}
 
 	private static final String TAG = "settings";
 	public static SharedPreferences prefs;
+	private static String error = null;
 }

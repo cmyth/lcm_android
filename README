@@ -4,16 +4,33 @@ libcmyth example application for Android
 This is a very simple example application for how to use libcmyth with
 Android and JNI.
 
-To build this application, you will first need to clone the libcmyth git
-repository, https://github.com/cmyth, into jni/cmyth:
+In order to build this, you will need the following installed on your
+system and available in your $PATH:
 
-	$ git clone git://github.com/cmyth/lcm_android.git jni/cmyth
+	- Android SDK
+	- Android NDK
+	- scons
+	- swig
 
-Then you can build the application:
+To build this application, you will first need to clone the libcmyth
+repository with support for generating Java bindings via SWIG.  You can
+get this by doing the following:
+
+	$ git clone git://github.com/gettler/cmyth.git cmyth
+	$ cd cmyth
+	$ git checkout swig
+
+Then you can build the application, which will also build libcmyth and
+the Java bindings:
 
 	$ make
 
 And install the application either on your simulator or your device:
+
+	$ make sim
+	$ make hw
+
+You can also update the application either on your simulator or device:
 
 	$ make sim_update
 	$ make hw_update

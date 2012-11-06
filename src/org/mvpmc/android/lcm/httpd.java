@@ -1,5 +1,5 @@
 //
-//  Copyright (C) 2011, Jon Gettler <gettler@mvpmc.org>
+//  Copyright (C) 2011-2012, Jon Gettler <gettler@mvpmc.org>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,8 +59,7 @@ public class httpd extends Thread
 				Log.v(TAG, "wait for connection");
 				Socket s = ss.accept();
 				Log.v(TAG, "got connection");
-				responder resp = new responder(prog,
-							       s);
+				responder resp = new responder(prog, s);
 				resp.start();
 			} catch (IOException ioe) {
 				Log.v(TAG, "io exception");
@@ -79,7 +78,6 @@ public class httpd extends Thread
 
 		while ((attempts-- > 0) && !done) {
 			try {
-//				port = 34144;
 				port = 5001 + randomGenerator.nextInt(32768);
 				server = new ServerSocket(port);
 				done = true;
@@ -118,15 +116,17 @@ public class httpd extends Thread
 				InputStream is = socket.getInputStream();
 				OutputStream os = socket.getOutputStream();
 				String hdr = readHeader(is);
-				parseHeader(hdr);
-				if (url != null) {
-					if (end > start) {
-						respond_partial(os);
+				if (hdr != null) {
+					parseHeader(hdr);
+					if (url != null) {
+						if (end > start) {
+							respond_partial(os);
+						} else {
+							respond_full(os);
+						}
 					} else {
-						respond_full(os);
+						Log.v(TAG, "skip response");
 					}
-				} else {
-					Log.v(TAG, "skip response");
 				}
 				is.close();
 				os.close();
@@ -155,7 +155,7 @@ public class httpd extends Thread
 				
 				for (i=0; i<lines.length; i++) {
 					if (lines[i].length() == 0) {
-						return s;
+						return s.substring(0, len);
 					}
 				}
 
@@ -168,6 +168,7 @@ public class httpd extends Thread
 		private void parseHeader(String hdr) {
 			String lines[] = hdr.split("\r\n");
 
+			Log.v(TAG, "bytes: " + hdr.length());
 			Log.v(TAG, "lines read: " + lines.length);
 
 			Log.v(TAG, "Header: " + lines[0]);
@@ -211,7 +212,7 @@ public class httpd extends Thread
 			int size = ((int)(end - start)) + 1;
 
 			hdr = String.format("HTTP/1.1 206 Partial Content\r\n" +
-					    "Server: mvpmc\r\n" +
+					    "Server: lcm\r\n" +
 					    "Accept-Ranges: bytes\r\n" +
 					    "Content-Length: %d\r\n" +
 					    "Content-Range: bytes %d-%d/%d\r\n" +
@@ -256,7 +257,7 @@ public class httpd extends Thread
 			Log.v(TAG, "send full response");
 
 			hdr = String.format("HTTP/1.1 200 OK\r\n" +
-					    "Server: mvpmc\r\n" +
+					    "Server: lcm\r\n" +
 					    "Accept-Ranges: bytes\r\n" +
 					    "Content-Length: %d\r\n" +
 					    "Connection: close\r\n" +

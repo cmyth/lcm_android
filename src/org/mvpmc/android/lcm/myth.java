@@ -1,5 +1,5 @@
 //
-//  Copyright (C) 2011, Jon Gettler <gettler@mvpmc.org>
+//  Copyright (C) 2011-2012, Jon Gettler <gettler@mvpmc.org>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public class myth extends Thread {
 		prefs = list.getPrefs();
 	}
 
-	public void connect() {
+	public int connect() {
 		Log.v(TAG, "connect()");
 		String server = list.getMythServer();
 		Log.v(TAG, "connect to server: " + server);
@@ -54,11 +54,12 @@ public class myth extends Thread {
 			conn = new connection(server);
 		} catch (Exception e) {
 			Log.v(TAG, "connect() failed!");
-			return;
+			return -1;
 		}
 		Log.v(TAG, "connect() finished");
 		progs = conn.get_proglist();
 		Log.v(TAG, "connect(): program count " + progs.get_count());
+		return 0;
 	}
 
 	public void disconnect() {

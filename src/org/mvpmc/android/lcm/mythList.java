@@ -65,10 +65,18 @@ public class mythList extends ListActivity
 	}
 
 	private void update_connection() {
+		Log.v(TAG, "update_connection()");
 		server = new myth(this);
 		server.start();
 		if (isMythEnabled()) {
-			server.connect();
+			if (server.connect() < 0) {
+				view_settings(true);
+				return;
+			}
+		} else {
+			Log.v(TAG, "server not enabled");
+			view_settings(true);
+			return;
 		}
 		updateList();
 	}
@@ -233,7 +241,11 @@ public class mythList extends ListActivity
 	public void onRestart() {
 		Log.v(TAG, "onRestart()");
 		super.onRestart();
-		updateList();
+		if (server == null) {
+			update_connection();
+		} else {
+			updateList();
+		}
 	}
 
 	// Called when the back button is pressed
@@ -255,7 +267,7 @@ public class mythList extends ListActivity
 			view_about();
 			return true;
 		case R.id.settings:
-			view_settings();
+			view_settings(false);
 			return false;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -276,9 +288,14 @@ public class mythList extends ListActivity
 		alert.show();
 	}
 
-	private void view_settings() {
+	private void view_settings(boolean error) {
 		Log.v(TAG, "view_settings()");
 
+		if (error) {
+			settings.set_error("Connection failed!  Please fix your server settings.");
+		} else {
+			settings.set_error(null);
+		}
 		startActivity(lcm.settings);
 	}
 
