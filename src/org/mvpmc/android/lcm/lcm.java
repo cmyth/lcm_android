@@ -1,5 +1,5 @@
 //
-//  Copyright (C) 2011, Jon Gettler <gettler@mvpmc.org>
+//  Copyright (C) 2011-2012, Jon Gettler <gettler@mvpmc.org>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,12 +34,24 @@ import android.preference.PreferenceManager;
 import android.preference.Preference;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
+import org.mvpmc.cmyth.java.proglist;
+
 public class lcm extends Activity
 {
 	// Called when object is created
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.v(TAG, "onCreate()");
+
+		server = null;
+
 		super.onCreate(savedInstanceState);
+
+		if (lcm != null) {
+			return;
+		}
+
+		lcm = this;
 
 		// Load preferences
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -52,11 +64,27 @@ public class lcm extends Activity
 
 	@Override
 	public void onStart() {
+		Log.v(TAG, "onStart()");
+
 		super.onStart();
 
-		// Create views
-		mythActivity = new Intent(getBaseContext(), mythList.class);
-		settings = new Intent(getBaseContext(), settings.class);
+		if (mythActivity == null) {
+			// Create views
+			mythActivity = new Intent(getBaseContext(),
+						  mythList.class);
+			settings = new Intent(getBaseContext(), settings.class);
+
+			// Connect to the MythTV server
+			update_connection(true);
+
+			// Wait for the connection to happen (in another thread)
+			if (server.conn_wait() != 0) {
+				Log.v(TAG, "onStart(): connection failed");
+			}
+		}
+
+		// Display the recordings list
+		startActivity(mythActivity);
 	}
 
 	// Called from stop when the activity comes to the foreground
@@ -77,37 +105,35 @@ public class lcm extends Activity
 		@Override
 		public void run() {
 			Log.v(TAG, "splashThread.run()");
-			try {
-				int waited = 0;
-				while (waited < 5000) {
-					sleep(100);
-					waited += 100;
-				}
-			} catch (InterruptedException e) {
-				// do nothing
-			} finally {
-				Log.v(TAG, "splashThread.run() finish");
-				startActivity(mythActivity);
-				if (!isMythEnabled()) {
-					startActivity(settings);
-				}
-				finish();
-			}
+			super.run();
 		}
 	}
 
-	private boolean isMythEnabled() {
-		return prefs.getBoolean("mythtv_enable", false);
+	public void update_connection(boolean force) {
+		Log.v(TAG, "update_connection()");
+		if ((server == null) || (force == true)) {
+			Log.v(TAG, "connect to server");
+			String s = prefs.getString("mythtv_server", "");
+			String p = prefs.getString("mythtv_port", "6543");
+			server = new myth(prefs, s, Integer.parseInt(p));
+			server.start();
+		}
+	}
+
+	public void update_connection() {
+		update_connection(false);
 	}
 
 	private static final String TAG = "lcm";
-	private Intent mythActivity;
 
-	public static myth server;
-	public static Intent settings;
+	public Intent settings;
+	private static Intent mythActivity;
+
+	public myth server;
 
 	private SharedPreferences prefs;
-	private boolean enabled;
+
+	public static lcm lcm;
 
 	static {
 		System.loadLibrary("refmem");

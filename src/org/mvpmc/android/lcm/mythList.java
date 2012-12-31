@@ -58,32 +58,26 @@ public class mythList extends ListActivity
 {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		Log.v(TAG, "onCreate()");
+		global = lcm.lcm;
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		update_connection();
+		super.onCreate(savedInstanceState);
 		Log.v(TAG, "mythList created");
 	}
 
 	private void update_connection() {
 		Log.v(TAG, "update_connection()");
-		server = new myth(this);
-		server.start();
-		if (isMythEnabled()) {
-			if (server.connect() < 0) {
-				view_settings(true);
-				return;
-			}
-		} else {
-			Log.v(TAG, "server not enabled");
-			view_settings(true);
-			return;
-		}
+		global.update_connection();
+		server = global.server;
 		updateList();
 	}
 
 	// Called after onCreate() or onRestart()
 	@Override
 	public void onStart() {
+		Log.v(TAG, "onStart()");
+
 		super.onStart();
 
 		// Register to listen for preference changes
@@ -91,9 +85,6 @@ public class mythList extends ListActivity
 			public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 				// Implementation
 				Log.v(TAG, "preference changed");
-				if (key.equals("mythtv_enable")) {
-					update_connection();
-				}
 				if (key.equals("mythtv_server")) {
 					update_connection();
 				}
@@ -107,9 +98,12 @@ public class mythList extends ListActivity
 	}
 
 	private void updateList() {
+		Log.v(TAG, "updateList()");
+
 		proglist pl = server.getProgList();
 
 		if (pl != progs) {
+			Log.v(TAG, "update progs");
 			progs = pl;
 		}
 
@@ -129,6 +123,8 @@ public class mythList extends ListActivity
 		long count = progs.get_count();
 		List list = new ArrayList();
 
+		Log.v(TAG, "mythList prog count " + count);
+
 		for (i=0; i<count; i++) {
 			proginfo prog = progs.get_prog(i);
 			String title = prog.title();
@@ -143,7 +139,10 @@ public class mythList extends ListActivity
 	private void createTitleList() {
 		List titles;
 
+		Log.v(TAG, "createTitleList()");
+
 		if (progs == null) {
+			Log.v(TAG, "progs is NULL");
 			titles = new ArrayList<String>();
 		} else {
 			Log.v(TAG, "mythList prog count " + progs.get_count());
@@ -184,6 +183,8 @@ public class mythList extends ListActivity
 
 	private void createEpisodeList() {
 		List episodes;
+
+		Log.v(TAG, "createEpisodeList()");
 
 		recordings = new ArrayList<proginfo>();
 
@@ -244,6 +245,7 @@ public class mythList extends ListActivity
 		if (server == null) {
 			update_connection();
 		} else {
+			server.reconnect();
 			updateList();
 		}
 	}
@@ -251,11 +253,11 @@ public class mythList extends ListActivity
 	// Called when the back button is pressed
 	@Override
 	public void onBackPressed() {
+		Log.v(TAG, "onBackPressed()");
 		if (current != null) {
 			current = null;
 			updateList();
 		} else {
-			cleanup();
 			super.onBackPressed();
 		}
 	}
@@ -296,7 +298,7 @@ public class mythList extends ListActivity
 		} else {
 			settings.set_error(null);
 		}
-		startActivity(lcm.settings);
+		startActivity(global.settings);
 	}
 
 	private void play_recording(long id) {
@@ -319,10 +321,6 @@ public class mythList extends ListActivity
 		startActivity(i); 
 	}
 
-	public boolean isMythEnabled() {
-		return prefs.getBoolean("mythtv_enable", false);
-	}
-
 	public String getMythServer() {
 		return prefs.getString("mythtv_server", "");
 	}
@@ -338,7 +336,7 @@ public class mythList extends ListActivity
 	}
 
 	private void cleanup() {
-		//libcmyth.refDebug();
+		Log.v(TAG, "cleanup()");
 		if (progs != null) {
 			progs.release();
 		}
@@ -356,7 +354,6 @@ public class mythList extends ListActivity
 				prog.release();
 			}
 		}
-		//libcmyth.refDebug();
 
 		daemon = null;
 		progs = null;
@@ -376,4 +373,6 @@ public class mythList extends ListActivity
 	private List titleList;
 	private String current;
 	private List recordings;
+
+	private lcm global;
 }

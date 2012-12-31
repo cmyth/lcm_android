@@ -20,6 +20,9 @@ package org.mvpmc.android.lcm;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -27,38 +30,74 @@ import android.util.Log;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.content.Intent;
+import android.os.SystemClock;
 
 import org.mvpmc.cmyth.java.connection;
 import org.mvpmc.cmyth.java.proglist;
+import org.mvpmc.cmyth.java.event;
 
 public class myth extends Thread {
 
-	public myth(mythList ml) {
-		list = ml;
+	public myth(SharedPreferences sp, String s, int p) {
+		Log.v(TAG, "myth()");
+
+		prefs = sp;
+		server = s;
+		port = p;
+
+		sync = new ReentrantLock();
 	}
 
 	@Override
 	public void run() {
-		super.run();
 		Log.v(TAG, "run()");
-		prefs = list.getPrefs();
+		super.run();
+		connect();
+
+		while (true) {
+			if (conn != null) {
+				event ev;
+
+				ev = conn.get_event();
+
+				Log.v(TAG, "event: " + ev.name());
+
+				if (ev.name().equals("connection closed")) {
+					conn = null;
+				}
+			} else {
+				try {
+					sleep(500);
+				} catch (Exception e) {
+				}
+			}
+		}
 	}
 
 	public int connect() {
 		Log.v(TAG, "connect()");
-		String server = list.getMythServer();
+		sync.lock();
 		Log.v(TAG, "connect to server: " + server);
-		int port = list.getMythPort();
 		Log.v(TAG, "connect to port: " + port);
 		try {
 			conn = new connection(server);
 		} catch (Exception e) {
 			Log.v(TAG, "connect() failed!");
+			sync.unlock();
 			return -1;
 		}
 		Log.v(TAG, "connect() finished");
 		progs = conn.get_proglist();
 		Log.v(TAG, "connect(): program count " + progs.get_count());
+		sync.unlock();
+		return 0;
+	}
+
+	public int reconnect() {
+		Log.v(TAG, "reconnect()");
+		if (conn == null) {
+			connect();
+		}
 		return 0;
 	}
 
@@ -69,15 +108,25 @@ public class myth extends Thread {
 	}
 
 	public long getProgCount() {
+		long n = 0;
 		if (progs != null) {
-			return progs.get_count();
-		} else {
-			return 0;
+			n = progs.get_count();
+			if (n < 0) {
+				if (connect() == 0) {
+					n = progs.get_count();
+				}
+			}
 		}
+
+		return n;
 	}
 
 	public proglist getProgList() {
-		return progs;
+		sync.lock();
+		proglist p = progs;
+		sync.unlock();
+
+		return p;
 	}
 
 	public void close() {
@@ -89,6 +138,36 @@ public class myth extends Thread {
 		}
 	}
 
+	public int conn_wait(int timeout) {
+		long start = SystemClock.elapsedRealtime();
+		long now;
+
+		timeout = timeout * 1000;
+
+		while (true) {
+			try {
+				if (sync.tryLock(10, TimeUnit.MILLISECONDS)) {
+					sync.unlock();
+					if (conn != null) {
+						return 0;
+					}
+				}
+				now = SystemClock.elapsedRealtime();
+				if ((now - start) >= timeout) {
+					break;
+				}
+				sleep(100);
+			} catch (Exception e) {
+			}
+		}
+
+		return -1;
+	}
+
+	public int conn_wait() {
+		return conn_wait(5);
+	}
+
 	private static final String TAG = "myth";
 	private SharedPreferences prefs;
 	private boolean enabled;
@@ -96,5 +175,8 @@ public class myth extends Thread {
 	private connection conn;
 	private proglist progs;
 
-	private mythList list;
+	private String server;
+	private int port;
+
+	private ReentrantLock sync;
 }

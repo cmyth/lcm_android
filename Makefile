@@ -34,3 +34,6 @@ hw:
 
 hw_update:
 	adb -d install -r bin/$(TARGET)-debug.apk
+
+sim_debug:
+	adb -s $(EMULATOR) logcat lcm:V myth:V mythList:V settings:V httpd:V responder:V *:S
