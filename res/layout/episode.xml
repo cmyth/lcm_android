@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout
+	android:id="@+id/widget0"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+<TextView
+	android:id="@+id/episode_title"
+	android:layout_width="306dp"
+	android:layout_height="wrap_content"
+	android:text="Title"
+	android:layout_x="8dp"
+	android:layout_y="7dp" />
+<ImageView
+	android:id="@+id/episode_image"
+	android:layout_width="93dp"
+	android:layout_height="97dp"
+	android:layout_x="216dp"
+	android:layout_y="60dp" />
+<TextView
+	android:id="@+id/episode_subtitle"
+	android:layout_width="301dp"
+	android:layout_height="wrap_content"
+	android:text="Subtitle"
+	android:layout_x="8dp"
+	android:layout_y="35dp" />
+<TextView
+	android:id="@+id/episode_description"
+	android:layout_width="301dp"
+	android:layout_height="204dp"
+	android:text="Description"
+	android:gravity="left"
+	android:layout_x="8dp"
+	android:layout_y="166dp" />
+<Button
+	android:id="@+id/episode_play"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="Play"
+	android:layout_x="8dp"
+	android:layout_y="379dp" />
+<Button
+	android:id="@+id/episode_delete"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="Delete"
+	android:layout_x="256dp"
+	android:layout_y="378dp" />
+<TextView
+	android:id="@+id/episode_channel"
+	android:layout_width="200dp"
+	android:layout_height="wrap_content"
+	android:text="Channel"
+	android:layout_x="8dp"
+	android:layout_y="60dp" />
+<TextView
+	android:id="@+id/episode_start"
+	android:layout_width="202dp"
+	android:layout_height="wrap_content"
+	android:text="Start Time"
+	android:layout_x="8dp"
+	android:layout_y="84dp" />
+<TextView
+	android:id="@+id/episode_duration"
+	android:layout_width="201dp"
+	android:layout_height="wrap_content"
+	android:text="Duration"
+	android:layout_x="8dp"
+	android:layout_y="109dp" />
+<Button
+	android:id="@+id/episode_download"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:text="Download"
+	android:layout_x="114dp"
+	android:layout_y="379dp" />
+<TextView
+	android:id="@+id/episode_size"
+	android:layout_width="196dp"
+	android:layout_height="wrap_content"
+	android:text="File Size"
+	android:layout_x="8dp"
+	android:layout_y="136dp" />
+</AbsoluteLayout>

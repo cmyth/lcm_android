@@ -14,10 +14,9 @@
     <string name="mythtv_port_summary">Server port number.</string>
     <string name="mythtv_port_dialog_title">Server Port Number</string>
 
-    <string name="myth_list_screen_name">Recordings</string>
-
     <string name="statistics_screen_name">Statistics</string>
     <string name="frontend_screen_name">MythTV</string>
+    <string name="episode_screen_name">MythTV Episode</string>
 
     <string name="sever_name">Server Name</string>
 

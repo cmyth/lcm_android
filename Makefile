@@ -7,7 +7,7 @@
 TARGET=lcm
 
 EMULATOR=emulator-5554
-FILTER=lcm:V settings:V httpd:V responder:V statistics:V frontend:V backend:V *:S
+FILTER=lcm:V settings:V httpd:V responder:V statistics:V frontend:V backend:V episode:V *:S
 
 default: debug
 

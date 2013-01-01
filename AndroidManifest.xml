@@ -24,6 +24,10 @@
                   android:label="@string/statistics_screen_name"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name="org.mvpmc.android.lcm.episode"
+                  android:label="@string/episode_screen_name"
+                  android:screenOrientation="portrait">
+        </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest> 

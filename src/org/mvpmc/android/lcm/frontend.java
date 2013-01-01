@@ -63,6 +63,9 @@ public class frontend extends ListActivity
 		server = global.server;
 		prefs = global.prefs;
 		super.onCreate(savedInstanceState);
+
+		episodeActivity = new Intent(getBaseContext(),
+					     episode.class);
 	}
 
 	@Override
@@ -186,7 +189,7 @@ public class frontend extends ListActivity
 		}
 
 		setListAdapter(new ArrayAdapter<String>(this,
-							R.layout.myth_list,
+							R.layout.frontend,
 							titleList));
 
 		ListView lv = getListView();
@@ -233,7 +236,7 @@ public class frontend extends ListActivity
 		}
 
 		setListAdapter(new ArrayAdapter<String>(this,
-							R.layout.myth_list,
+							R.layout.frontend,
 							episodes));
 
 		ListView lv = getListView();
@@ -243,29 +246,10 @@ public class frontend extends ListActivity
 			public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
 				Log.v(TAG, "id " + id);
-				play_recording(id);
+				episode.prog = (proginfo)recordings.get((int)id);
+				startActivity(episodeActivity);
 			}
 		});
-	}
-
-	private void play_recording(long id) {
-		Log.v(TAG, "play_recording " + id);
-
-		proginfo prog = (proginfo)recordings.get((int)id);
-
-		if (daemon == null) {
-			daemon = new httpd(prog);
-			daemon.start();
-		} else {
-			daemon.setProgram(prog);
-		}
-
-		int port = daemon.getPort();
-		String name = prog.pathname();
-		String url = String.format("http://localhost:%d/%s", port, name);
-		Intent i = new Intent(Intent.ACTION_VIEW);  
-		i.setData(Uri.parse(url));  
-		startActivity(i); 
 	}
 
 	private static final String TAG = "frontend";
@@ -281,5 +265,5 @@ public class frontend extends ListActivity
 	private List recordings;
 	private List titleList;
 
-	private httpd daemon;
+	private Intent episodeActivity;
 }

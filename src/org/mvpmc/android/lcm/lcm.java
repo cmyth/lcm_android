@@ -185,9 +185,9 @@ public class lcm extends Activity
 
 	private static final String TAG = "lcm";
 
-	public Intent settingsActivity;
+	private Intent settingsActivity;
 	private Intent frontendActivity;
-	public Intent statisticsActivity;
+	private Intent statisticsActivity;
 
 	public backend server;
 
