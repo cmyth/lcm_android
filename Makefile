@@ -7,6 +7,7 @@
 TARGET=lcm
 
 EMULATOR=emulator-5554
+FILTER=lcm:V settings:V httpd:V responder:V statistics:V frontend:V backend:V *:S
 
 default: debug
 
@@ -36,4 +37,7 @@ hw_update:
 	adb -d install -r bin/$(TARGET)-debug.apk
 
 sim_debug:
-	adb -s $(EMULATOR) logcat lcm:V myth:V mythList:V settings:V httpd:V responder:V *:S
+	adb -s $(EMULATOR) logcat $(FILTER)
+
+hw_debug:
+	adb -d logcat lcm:V $(FILTER)

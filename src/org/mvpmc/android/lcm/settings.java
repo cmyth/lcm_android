@@ -1,5 +1,5 @@
 //
-//  Copyright (C) 2011, Jon Gettler <gettler@mvpmc.org>
+//  Copyright (C) 2011-2013, Jon Gettler <gettler@mvpmc.org>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,6 +41,14 @@ public class settings extends PreferenceActivity
 		if (error != null) {
 			show_error(error);
 		}
+		global = lcm.lcm;
+	}
+
+	@Override
+	public void onBackPressed() {
+		Log.v(TAG, "onBackPressed()");
+		super.onBackPressed();
+		global.settings_done();
 	}
 
 	public void show_error(String msg) {
@@ -64,4 +72,6 @@ public class settings extends PreferenceActivity
 	private static final String TAG = "settings";
 	public static SharedPreferences prefs;
 	private static String error = null;
+
+	private lcm global;
 }

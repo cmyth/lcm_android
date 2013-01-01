@@ -16,8 +16,12 @@
                   android:label="@string/settings_screen_name"
                   android:screenOrientation="portrait">
         </activity>
-        <activity android:name="org.mvpmc.android.lcm.mythList"
-                  android:label="@string/myth_list_screen_name"
+        <activity android:name="org.mvpmc.android.lcm.frontend"
+                  android:label="@string/frontend_screen_name"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name="org.mvpmc.android.lcm.statistics"
+                  android:label="@string/statistics_screen_name"
                   android:screenOrientation="portrait">
         </activity>
     </application>
